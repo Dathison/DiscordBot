@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 import subprocess
+import secrets
 
-TOKEN = 'OTk0NjA0MjM3MzMxODkwMTc3.GPonHl.yrc-XeIV7VoedxcZ3EkMtQvZoiAQ9MPCIBucw0'
+TOKEN = secrets.discord_token
 
 description = '''Piss Bot for the Piss people!'''
 bot = commands.Bot(command_prefix='!', description=description)
