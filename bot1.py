@@ -64,6 +64,6 @@ async def table(ctx):
 
 	#table_proc = subprocess.Popen([table.py], stdout=subprocess.PIPE)
 	#print(stdout)
-	await ctx.send(subprocess.run("table.py"))
+	await ctx.send(str(subprocess.run("table.py")))
 
 bot.run(TOKEN)
