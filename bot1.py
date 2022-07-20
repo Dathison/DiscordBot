@@ -58,12 +58,13 @@ async def divide(ctx, left : int, right : int):
 #		return
 
 @bot.command()
-async def table(ctx):
+async def pl_table(ctx):
 
     "Shows the Premier League table of the current season."
 
 	#table_proc = subprocess.Popen([table.py], stdout=subprocess.PIPE)
 	#print(stdout)
-    await ctx.send(str(subprocess.run("table.py")))
+    table_output = open("table_output","r")
+    await ctx.send(table_output.read())
 
 bot.run(TOKEN)

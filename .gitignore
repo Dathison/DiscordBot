@@ -130,3 +130,7 @@ dmypy.json
 
 secrets.py
 table.py
+<<<<<<< Updated upstream
+=======
+table_output
+>>>>>>> Stashed changes
