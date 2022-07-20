@@ -1,7 +1,7 @@
-import discord
-from discord.ext import commands
 import subprocess
 import secrets
+import discord
+from discord.ext import commands
 
 TOKEN = secrets.discord_token
 
@@ -41,10 +41,10 @@ async def multiply(ctx, left : int, right : int):
 async def divide(ctx, left : int, right : int):
     """Divides two numbers."""
     if left == 0 or right == 0:
-         await ctx.send("Don't fucking divide by zero, you idiot.")
+        await ctx.send("Don't fucking divide by zero, you idiot.")
     else:
-         await ctx.send(left / right)
-         return
+        await ctx.send(left / right)
+        return
 
 #@bot.event
 #async def on_message(message):
@@ -60,10 +60,10 @@ async def divide(ctx, left : int, right : int):
 @bot.command()
 async def table(ctx):
 
-	"Shows the Premier League table of the current season."
+    "Shows the Premier League table of the current season."
 
 	#table_proc = subprocess.Popen([table.py], stdout=subprocess.PIPE)
 	#print(stdout)
-	await ctx.send(str(subprocess.run("table.py")))
+    await ctx.send(str(subprocess.run("table.py")))
 
 bot.run(TOKEN)
