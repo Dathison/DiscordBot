@@ -46,20 +46,16 @@ async def divide(ctx, left : int, right : int):
         await ctx.send(left / right)
         return
 
-@bot.event
-async def on_message(message):
-	username = str(message.author).split("#")[0]
-	channel = str(message.channel.name)
-	user_message = str(message.content)
-	msg_count = int
-	msg_count = 1
-
+#@bot.event
+#async def on_message(message):
+#	username = str(message.author).split("#")[0]
+#	channel = str(message.channel.name)
+#	user_message = str(message.content)
+#
 #	print(f'#{msg_count} {username} said: |{user_message}| in |{channel}|')
-
-	if message.author != bot.user:
-		print(f'#{msg_count} {username} said: |{user_message}| in |{channel}|')
-	else:
-		return
+#
+#	if message.author == bot.user:
+#		return
 
 @bot.command()
 async def pl_table(ctx):
