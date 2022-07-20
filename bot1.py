@@ -1,7 +1,7 @@
-import discord
-from discord.ext import commands
 import subprocess
 import secrets
+import discord
+from discord.ext import commands
 
 TOKEN = secrets.discord_token
 
