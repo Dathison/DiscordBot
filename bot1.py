@@ -46,25 +46,27 @@ async def divide(ctx, left : int, right : int):
         await ctx.send(left / right)
         return
 
-#@bot.event
-#async def on_message(message):
-#	username = str(message.author).split("#")[0]
-#	channel = str(message.channel.name)
-#	user_message = str(message.content)
-#
-#	print(f'{username} said: {user_message} in {channel}')
-#
-#	if message.author == bot.user:
-#		return
+@bot.event
+async def on_message(message):
+	username = str(message.author).split("#")[0]
+	channel = str(message.channel.name)
+	user_message = str(message.content)
+	msg_count = int
+	msg_count = 1
+
+#	print(f'#{msg_count} {username} said: |{user_message}| in |{channel}|')
+
+	if message.author != bot.user:
+		print(f'#{msg_count} {username} said: |{user_message}| in |{channel}|')
+	else:
+		return
 
 @bot.command()
 async def pl_table(ctx):
 
     "Shows the Premier League table of the current season."
 
-	#table_proc = subprocess.Popen([table.py], stdout=subprocess.PIPE)
-	#print(stdout)
-    table_output = open("table_output","r")
-    await ctx.send(table_output.read())
+    table_output = open("table_output","r") # Open "table_output" as file in "r"(read) mode.
+    await ctx.send(table_output.read()) # In the message to be sent, read the "table_output" file as a string and add it to the message.
 
 bot.run(TOKEN)
