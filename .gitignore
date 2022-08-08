@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 secrets.py
-table.py
-table_output
+*table.py
+*_output
+*fixtures.py
