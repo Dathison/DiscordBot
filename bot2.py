@@ -81,7 +81,7 @@ async def pl_table(ctx):
 
         print(list(final_prem_table))
 
-### Prints simple list of every Premier League team with no additional bits added ###
+        ### Prints a full table of the Premier League and posts it in response to the user sending the command ###
 
 
         prem_table = []
