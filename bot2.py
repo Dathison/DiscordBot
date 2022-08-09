@@ -1,8 +1,6 @@
 import subprocess
 import secrets
 import discord
-#import table
-import laliga_table
 import cl_table
 import spurs_fixtures
 import lxml
@@ -12,7 +10,6 @@ import re
 import time
 import asyncio
 from tabulate import tabulate
-#import pandas as pd
 from discord.ext import commands
 
 TOKEN = secrets.discord_token
@@ -39,20 +36,48 @@ async def laliga_table(ctx):
     "Shows the La Liga table of the current season."
 
     def ll_table():
-        lal_table_link = f"https://onefootball.com/en/competition/laliga-10/table"
-        lal_table_source = requests.get(lal_table_link).text
-        lal_table_page = BeautifulSoup(lal_table_source, "lxml")
-        lal_tab = lal_table_page.find_all("a", class_="standings__row-grid")
+        laliga_table_link = f"https://onefootball.com/en/competition/laliga-10/table"
+        laliga_table_source = requests.get(laliga_table_link).text
+        laliga_table_page = BeautifulSoup(laliga_table_source, "lxml")
+        # pos_prem_table = laliga_table_page.find_all("a", class_="standings__cell standings__cell--numeric")
+        teams_laliga_table = laliga_table_page.find_all("p", class_="title-7-medium standings__team-name")
+        points_laliga_table = laliga_table_page.find_all("span", class_="title-7-bold")
+        stats_laliga_table = laliga_table_page.find_all("span", class_="standings__cell-text--dimmed")
 
-        lal_table = []
-        lal_table.append("  ________________ PL W D L GD PTS")
+        ### Prints columnised table of the Premier League at the moment of command execution ###
 
-        for i in range(len(lal_tab)):
-            lal_tab[i].insert('1', 'test')
-            lal_table.append(lal_tab[i].text.strip())
+        # temp_pos_table = []
+        temp_laliga_teams_table = []  # Empty table created to be filled later.
+        temp_laliga_points_table = []
+        temp_laliga_stats_table = []
+        numbers_table = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+                         '18', '19',
+                         '20']  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
+        headers = ["Pos", "Team", "GP", "W", "D", "L", "GD", "Pts"]
 
-        ll_tab = '\n'.join(lal_table) # Converts the single-line list into a line-separated list.
-        return ll_tab # Defining the output of premierleague_table sent to whatever function uses it.
+        # for i in range (len(pos_prem_table)):
+        #    temp_pos_table.append(pos_prem_table[i].text.strip())
+
+        for i in range(len(teams_laliga_table)):  # For every line temp_tab:
+            temp_laliga_teams_table.append(
+                teams_laliga_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
+
+        for i in range(len(points_laliga_table)):
+            temp_laliga_points_table.append(points_laliga_table[i].text.strip())
+
+        for i in range(len(stats_laliga_table)):
+            temp_laliga_stats_table.append(stats_laliga_table[i].text.strip())
+
+        #  stats_prem_table returns GP, W, D, L, and GD all in one go. This is why the following function can simply reuse the variable by starting the table count at different rows.
+        intermediate_laliga_table = zip(numbers_table, temp_laliga_teams_table, temp_laliga_stats_table[0::5], temp_laliga_stats_table[1::5],
+                                      temp_laliga_stats_table[2::5], temp_laliga_stats_table[3::5], temp_laliga_stats_table[4::5],
+                                      temp_laliga_points_table[
+                                      1::2])  # Add the two tables together, row for row. The temp_points_table only selected every second entry of the table starting from the first uneven numbers. This is due to how the website is formatted.
+
+        final_laliga_table = tabulate(intermediate_laliga_table, headers=headers)
+
+        print(final_laliga_table)
+        return final_laliga_table
 
     await ctx.send(ll_table())
 
@@ -63,20 +88,23 @@ async def pl_table(ctx):
         prem_table_link = f"https://onefootball.com/en/competition/premier-league-9/table"
         prem_table_source = requests.get(prem_table_link).text
         prem_table_page = BeautifulSoup(prem_table_source, "lxml")
-#        prem_tab = prem_table_page.find_all("a", class_="standings__row-grid")
+        #pos_prem_table = prem_table_page.find_all("a", class_="standings__cell standings__cell--numeric")
         teams_prem_table = prem_table_page.find_all("p", class_="title-7-medium standings__team-name")
         points_prem_table = prem_table_page.find_all("span", class_="title-7-bold")
         stats_prem_table = prem_table_page.find_all("span", class_="standings__cell-text--dimmed")
 
-        ### TESTING AREA ###
-        ### Prints alphabetical list of all Premier League teams ###
+        ### Prints columnised table of the Premier League at the moment of command execution ###
 
+        #temp_pos_table = []
         temp_teams_table = []  # Empty table created to be filled later.
         temp_points_table = []
         temp_stats_table = []
         numbers_table = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
         headers = ["Pos","Team", "GP", "W", "D", "L", "GD", "Pts"]
 
+
+        #for i in range (len(pos_prem_table)):
+        #    temp_pos_table.append(pos_prem_table[i].text.strip())
 
         for i in range(len(teams_prem_table)):  # For every line temp_tab:
             temp_teams_table.append(teams_prem_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
@@ -87,36 +115,72 @@ async def pl_table(ctx):
         for i in range(len(stats_prem_table)):
             temp_stats_table.append(stats_prem_table[i].text.strip())
 
+### DOESN'T WORK ### #  Code for inserting a line at certain lines in the table.
+#        numbers_table.insert(4, "---")
+#        temp_teams_table.insert(4, " ")
+#        temp_stats_table.insert(4, " ")
+#        temp_points_table.insert(4, " ")
 
-
+        #  stats_prem_table returns GP, W, D, L, and GD all in one go. This is why the following function can simply reuse the variable by starting the table count at different rows.
         intermediate_prem_table = zip(numbers_table, temp_teams_table, temp_stats_table[0::5], temp_stats_table[1::5], temp_stats_table[2::5], temp_stats_table[3::5], temp_stats_table[4::5], temp_points_table[1::2])  # Add the two tables together, row for row. The temp_points_table only selected every second entry of the table starting from the first uneven numbers. This is due to how the website is formatted.
 
         final_prem_table = tabulate(intermediate_prem_table, headers=headers)
 
         print(final_prem_table)
         return final_prem_table
-#        for entry in final_prem_table:  # For every entry in final_prem_table:
-#            print(entry[0], entry[1])  # Print the first column first, then the second.
 
-#        print(list(final_prem_table))
-
-        ### Prints a full table of the Premier League and posts it in response to the user sending the command ###
-
-
-        prem_table = []
-        prem_table.append("  ________________ PL W D L GD PTS")
-
-        for i in range(len(prem_tab)):
-
-            if 'Arsenal' in prem_tab[i].text:
-                prem_tab[i].append(" <----- Wow these guys are shit!")
-
-            prem_table.append(prem_tab[i].text.strip())
-
-        b = '\n'.join(prem_table)
-#        return b
-        
     await ctx.send(f'``` {pl_table()} ```')
+
+@bot.command()
+async def buli_table(ctx):
+
+    "Shows the La Liga table of the current season."
+
+    def bl_table():
+        bundesliga_table_link = f"https://onefootball.com/en/competition/bundesliga-1/table"
+        bundesliga_table_source = requests.get(bundesliga_table_link).text
+        bundesliga_table_page = BeautifulSoup(bundesliga_table_source, "lxml")
+        # pos_prem_table = laliga_table_page.find_all("a", class_="standings__cell standings__cell--numeric")
+        teams_bundesliga_table = bundesliga_table_page.find_all("p", class_="title-7-medium standings__team-name")
+        points_bundesliga_table = bundesliga_table_page.find_all("span", class_="title-7-bold")
+        stats_bundesliga_table = bundesliga_table_page.find_all("span", class_="standings__cell-text--dimmed")
+
+        ### Prints columnised table of the Premier League at the moment of command execution ###
+
+        # temp_pos_table = []
+        temp_bundesliga_teams_table = []  # Empty table created to be filled later.
+        temp_bundesliga_points_table = []
+        temp_bundesliga_stats_table = []
+        numbers_table = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+                         '18', '19',
+                         '20']  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
+        headers = ["Pos", "Team", "GP", "W", "D", "L", "GD", "Pts"]
+
+        # for i in range (len(pos_prem_table)):
+        #    temp_pos_table.append(pos_prem_table[i].text.strip())
+
+        for i in range(len(teams_bundesliga_table)):  # For every line temp_tab:
+            temp_bundesliga_teams_table.append(
+                teams_bundesliga_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
+
+        for i in range(len(points_bundesliga_table)):
+            temp_bundesliga_points_table.append(points_bundesliga_table[i].text.strip())
+
+        for i in range(len(stats_bundesliga_table)):
+            temp_bundesliga_stats_table.append(stats_bundesliga_table[i].text.strip())
+
+        #  stats_prem_table returns GP, W, D, L, and GD all in one go. This is why the following function can simply reuse the variable by starting the table count at different rows.
+        intermediate_bundesliga_table = zip(numbers_table, temp_bundesliga_teams_table, temp_bundesliga_stats_table[0::5], temp_bundesliga_stats_table[1::5],
+                                      temp_bundesliga_stats_table[2::5], temp_bundesliga_stats_table[3::5], temp_bundesliga_stats_table[4::5],
+                                      temp_bundesliga_points_table[
+                                      1::2])  # Add the two tables together, row for row. The temp_points_table only selected every second entry of the table starting from the first uneven numbers. This is due to how the website is formatted.
+
+        final_bundesliga_table = tabulate(intermediate_bundesliga_table, headers=headers)
+
+        print(final_bundesliga_table)
+        return final_bundesliga_table
+
+    await ctx.send(bl_table())
 
 @bot.command()
 async def cl_table(ctx):
