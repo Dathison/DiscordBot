@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import re
 import time
 import asyncio
+from tabulate import tabulate
 #import pandas as pd
 from discord.ext import commands
 
@@ -62,24 +63,42 @@ async def pl_table(ctx):
         prem_table_link = f"https://onefootball.com/en/competition/premier-league-9/table"
         prem_table_source = requests.get(prem_table_link).text
         prem_table_page = BeautifulSoup(prem_table_source, "lxml")
-        prem_tab = prem_table_page.find_all("a", class_="standings__row-grid")
-        temp_tab = prem_table_page.find_all("p", class_="title-7-medium standings__team-name")
+#        prem_tab = prem_table_page.find_all("a", class_="standings__row-grid")
+        teams_prem_table = prem_table_page.find_all("p", class_="title-7-medium standings__team-name")
+        points_prem_table = prem_table_page.find_all("span", class_="title-7-bold")
+        stats_prem_table = prem_table_page.find_all("span", class_="standings__cell-text--dimmed")
 
         ### TESTING AREA ###
         ### Prints alphabetical list of all Premier League teams ###
 
-        temp_table = []  # Empty table created to be filled later.
+        temp_teams_table = []  # Empty table created to be filled later.
+        temp_points_table = []
+        temp_stats_table = []
         numbers_table = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
+        headers = ["Pos","Team", "GP", "W", "D", "L", "GD", "Pts"]
 
-        for i in range(len(temp_tab)):  # For every line temp_tab:
-            temp_table.append(temp_tab[i].text.strip())  # Add a line to temp_table and strip away the formatting.
 
-        final_prem_table = zip(numbers_table, temp_table)  # Add the two tables together, row for row.
+        for i in range(len(teams_prem_table)):  # For every line temp_tab:
+            temp_teams_table.append(teams_prem_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
 
-        for entry in final_prem_table:  # For every entry in final_prem_table:
-            print(entry[0], entry[1])  # Print the first column first, then the second.
+        for i in range(len(points_prem_table)):
+            temp_points_table.append(points_prem_table[i].text.strip())
 
-        print(list(final_prem_table))
+        for i in range(len(stats_prem_table)):
+            temp_stats_table.append(stats_prem_table[i].text.strip())
+
+
+
+        intermediate_prem_table = zip(numbers_table, temp_teams_table, temp_stats_table[0::5], temp_stats_table[1::5], temp_stats_table[2::5], temp_stats_table[3::5], temp_stats_table[4::5], temp_points_table[1::2])  # Add the two tables together, row for row. The temp_points_table only selected every second entry of the table starting from the first uneven numbers. This is due to how the website is formatted.
+
+        final_prem_table = tabulate(intermediate_prem_table, headers=headers)
+
+        print(final_prem_table)
+        return final_prem_table
+#        for entry in final_prem_table:  # For every entry in final_prem_table:
+#            print(entry[0], entry[1])  # Print the first column first, then the second.
+
+#        print(list(final_prem_table))
 
         ### Prints a full table of the Premier League and posts it in response to the user sending the command ###
 
@@ -95,8 +114,8 @@ async def pl_table(ctx):
             prem_table.append(prem_tab[i].text.strip())
 
         b = '\n'.join(prem_table)
-        return b
-
+#        return b
+        
     await ctx.send(f'``` {pl_table()} ```')
 
 @bot.command()
