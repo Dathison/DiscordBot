@@ -79,7 +79,7 @@ async def laliga_table(ctx):
         print(final_laliga_table)
         return final_laliga_table
 
-    await ctx.send(ll_table())
+    await ctx.send(f'``` {ll_table()} ```')
 
 @bot.command()
 async def pl_table(ctx):
@@ -180,7 +180,7 @@ async def buli_table(ctx):
         print(final_bundesliga_table)
         return final_bundesliga_table
 
-    await ctx.send(bl_table())
+    await ctx.send(f'``` {bl_table()} ```')
 
 @bot.command()
 async def cl_table(ctx):
