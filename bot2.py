@@ -91,7 +91,7 @@ async def pl_table(ctx):
         #pos_prem_table = prem_table_page.find_all("a", class_="standings__cell standings__cell--numeric")
         teams_prem_table = prem_table_page.find_all("p", class_="title-7-medium standings__team-name")
         points_prem_table = prem_table_page.find_all("span", class_="title-7-bold")
-        stats_prem_table = prem_table_page.find_all("span", class_="standings__cell-text--dimmed")
+        temp_prem_table = prem_table_page.find_all("span", class_="standings__cell-text--dimmed")
 
         ### Prints columnised table of the Premier League at the moment of command execution ###
 
@@ -99,12 +99,20 @@ async def pl_table(ctx):
         temp_teams_table = []  # Empty table created to be filled later.
         temp_points_table = []
         temp_stats_table = []
-        numbers_table = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
+#        temp_gp_table = [temp_prem_table[0::5]]
+#        temp_w_table = [temp_prem_table[1::5]]
+#        temp_d_table = [temp_prem_table[2::5]]
+#        temp_l_table = [temp_prem_table[3::5]]
+#        temp_gd_table = [temp_prem_table[4::5]]
+        numbers_table = []  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the site.
         headers = ["Pos","Team", "GP", "W", "D", "L", "GD", "Pts"]
 
+        numbers_table = list(range(1, len(teams_prem_table)+1))
 
         #for i in range (len(pos_prem_table)):
         #    temp_pos_table.append(pos_prem_table[i].text.strip())
+
+#        temp_prem_table.text.strip()
 
         for i in range(len(teams_prem_table)):  # For every line temp_tab:
             temp_teams_table.append(teams_prem_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
@@ -112,8 +120,20 @@ async def pl_table(ctx):
         for i in range(len(points_prem_table)):
             temp_points_table.append(points_prem_table[i].text.strip())
 
-        for i in range(len(stats_prem_table)):
-            temp_stats_table.append(stats_prem_table[i].text.strip())
+        for i in range(len(temp_prem_table)):
+            temp_stats_table.append(temp_prem_table[i].text.strip())
+
+#        for i in range(len(temp_prem_table[1::5])):
+#            temp_w_table.append(temp_prem_table[1::5][i])
+
+#        for i in range(len(temp_prem_table[2::5])):
+#            temp_d_table.append(temp_prem_table[2::5][i])
+
+#        for i in range(len(temp_prem_table[3::5])):
+#            temp_l_table.append(temp_prem_table[3::5][i])
+
+#        for i in range(len(temp_prem_table[4::5])):
+#            temp_gd_table.append(temp_prem_table[4::5][i])
 
 ### DOESN'T WORK ### #  Code for inserting a line at certain lines in the table.
 #        numbers_table.insert(4, "---")
@@ -183,12 +203,109 @@ async def buli_table(ctx):
     await ctx.send(f'``` {bl_table()} ```')
 
 @bot.command()
+async def champ_table(ctx):
+
+    def cs_table():
+        cs_table_link = f"https://onefootball.com/en/competition/the-championship-27/table"
+        cs_table_source = requests.get(cs_table_link).text
+        cs_table_page = BeautifulSoup(cs_table_source, "lxml")
+        teams_cs_table = cs_table_page.find_all("p", class_="title-7-medium standings__team-name")
+        points_cs_table = cs_table_page.find_all("span", class_="title-7-bold")
+        temp_cs_table = cs_table_page.find_all("span", class_="standings__cell-text--dimmed")
+
+        ### Prints columnised table of the Premier League at the moment of command execution ###
+
+        temp_cs_teams_table = []  # Empty table created to be filled later.
+        temp_cs_points_table = []
+        temp_cs_stats_table = []
+        numbers_table = []  # List of numbers manually inputted. Will later be changed and have the script automatically fetch these from the si>
+        headers = ["Pos","Team", "GP", "W", "D", "L", "GD", "Pts"]
+
+        cs_numbers_table = list(range(1, len(teams_cs_table)+1))
+
+        for i in range(len(teams_cs_table)):  # For every line temp_tab:
+            temp_cs_teams_table.append(teams_cs_table[i].text.strip())  # Add a line to temp_table and strip away the formatting.
+
+        for i in range(len(points_cs_table)):
+            temp_cs_points_table.append(points_cs_table[i].text.strip())
+
+        for i in range(len(temp_cs_table)):
+            temp_cs_stats_table.append(temp_cs_table[i].text.strip())
+
+        intermediate_cs_table = zip(cs_numbers_table, temp_cs_teams_table, temp_cs_stats_table[0::5], temp_cs_stats_table[1::5], temp_cs_stats_table[2::5], temp_cs_stats_table[3::5], temp_cs_stats_table[4::5], temp_cs_points_table[1::2])
+
+        final_cs_table = tabulate(intermediate_cs_table, headers=headers)
+
+        print(final_cs_table)
+        return final_cs_table
+
+    await ctx.send(f'``` {cs_table()} ```')
+
+@bot.command()
 async def cl_table(ctx):
 
-    "Shows the Champions League table of the current season."
-    cl_table()
-    cl_table_output = open("cl_table_output","r")
-    await ctx.send(f"``` {cl_table_output.read()} ```")
+    def chle_table():
+
+        cl_table_link = f"https://onefootball.com/en/competition/champions-league-5/table"
+        cl_table_source = requests.get(cl_table_link).text
+        cl_table_page = BeautifulSoup(cl_table_source, "lxml")
+        temp_cl_groups = cl_table_page.find_all("p",class_="label standings__table-header-text")
+        temp_cl_teams = cl_table_page.find_all("p",class_="title-7-medium standings__team-name")
+        temp_cl_stats = cl_table_page.find_all("span", class_="title-7-medium standings__cell-text--dimmed")
+        temp_cl_points = cl_table_page.find_all("span", class_="title-7-bold")  # Includes positions on even numbered keys and points on odd numbered keys.
+
+
+        group_cl = []
+        teams_cl = []
+        stats_cl = []
+        points_cl = []
+
+        headers = ["Pos","Team", "GP", "W", "D", "L", "GD", "Pts"]
+
+        for i in range(len(temp_cl_groups)):
+            group_cl.append(temp_cl_groups[i].text.strip())
+
+            for x in range(int(len(temp_cl_teams) / len(temp_cl_groups)) - 1):
+                group_cl.append("")
+
+        for i in range(len(temp_cl_teams)):
+            teams_cl.append(temp_cl_teams[i].text.strip())
+
+        for i in range (len(temp_cl_stats)):
+            stats_cl.append(temp_cl_stats[i].text.strip())
+
+        for i in range (len(temp_cl_points)):
+            points_cl.append(temp_cl_points[i].text.strip())
+
+        group_len = len(group_cl)
+        teams_len = len(teams_cl)
+        stats_len = len(stats_cl)
+        points_len = len(points_cl)
+
+        group_divisor = group_len//2
+        teams_divisor = teams_len//2
+        stats_divisor = stats_len//2
+        points_divisor = points_len//2
+
+        first_group_cl = group_cl[:group_divisor]
+        first_teams_cl = teams_cl[:teams_divisor]
+        first_stats_cl = stats_cl[:stats_divisor]
+        first_points_cl = points_cl[:points_divisor]
+        second_group_cl = group_cl[group_divisor:]
+        second_teams_cl = teams_cl[teams_divisor:]
+        second_stats_cl = stats_cl[stats_divisor:]
+        second_points_cl = points_cl[points_divisor:]
+
+        first_intermediate_cl_table = zip(first_group_cl, first_points_cl[0::2], first_teams_cl,  first_stats_cl[0::5], first_stats_cl[1::5], first_stats_cl[2::5], first_stats_cl[3::5], first_stats_cl[4::5], first_points_cl[1::2])
+        second_intermediate_cl_table = zip(second_group_cl, second_points_cl[0::2], second_teams_cl,  second_stats_cl[0::5], second_stats_cl[1::5], second_stats_cl[2::5], second_stats_cl[3::5], second_stats_cl[4::5], second_points_cl[1::2])
+
+        chle_table.first_final_cl_table = tabulate(first_intermediate_cl_table, headers=headers)
+        chle_table.second_final_cl_table = tabulate(second_intermediate_cl_table, headers=headers)
+
+    chle_table()
+
+    await ctx.send(f"``` {chle_table.first_final_cl_table} ``` ")
+    await ctx.send(f"``` {chle_table.second_final_cl_table} ```")
 
 @bot.command()
 async def shutdown(self,ctx):
