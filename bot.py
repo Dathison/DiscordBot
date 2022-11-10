@@ -14,6 +14,7 @@ from discord.ext import commands
 import pandas as pd
 
 TOKEN = secrets_file.discord_token
+#TOKEN = $6$CK7RwD7pV5ACojsQ$1DYRYXeKbuI/auNwctI9UtnJ9sgZ4ql7.FCfyhHzo8a7rvPu49FWIEFOK0wqHW5qnR1W.bQUzAM5dJCJZBSqb/
 
 description = '''Piss Bot for the Piss people!'''
 bot = commands.Bot(command_prefix='!', description=description)
